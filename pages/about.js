@@ -4,112 +4,117 @@ const Page = () => {
       <div className="jumbotron text-center">
         <h1>Signify - ASL Translator</h1>
         <h4>
-          Signify uses machine learning to transform webcam input into readable
-          sign language using a variety of different techniques. The series of
-          texts below detail the steps taken for signify to translate an image
-          into a final word.
+          A project by Arjun Rane, Supriya Khadka, and Om Patil<br/>
+          Guided by Prof. Pooja Kulkarni
+        </h4>
+        <h4>
+          Signify leverages MediaPipe technology to convert webcam input into readable
+          sign language text. The sections below outline the key processes that enable
+          Signify to translate hand gestures into written words.
         </h4>
       </div>
       <div className="bg-secondary jumbotron">
-        <h3 className="text-center">1. OpenCV Pipeline</h3>
+        <h3 className="text-center">1. Hand Landmark Detection</h3>
         <div className="row justify-content-center">
           <img
             src="opencv.png"
-            alt="OpenCV Pipeline Demo"
+            alt="Hand Landmark Detection"
             className="img-responsive col-xs-12 col-md-6"
             style={{ height: '100%' }}
           />
           <div className="col-xs-12 col-md-6">
             <p>
-              The first step of the process to transform an image to a letter
-              output is our OpenCV pipeline. This pipeline is written as the
-              following:
+              The first step in our translation process uses MediaPipe's Hand Landmark
+              Detection to accurately identify key points on the hand. This system works by:
               <br />
               <code>
-                cv.cvtColor(img, result, cv.COLOR_BGR2GRAY);
+                const hands = new Hands({'{'}locateFile: (file) => {'{'}
                 <br />
-                cv.adaptiveThreshold( result, result, 255,
-                cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 21, 2 );
+                  return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${'${file}'}`;
                 <br />
-                cv.cvtColor(result, result, cv.COLOR_GRAY2RGB);
+                {'}'}{'})'};
+                <br />
+                hands.setOptions({'{'}
+                <br />
+                  maxNumHands: 2,
+                <br />
+                  modelComplexity: 1,
+                <br />
+                  minDetectionConfidence: 0.5,
+                <br />
+                  minTrackingConfidence: 0.5
+                <br />
+                {'}'});
               </code>
               <br />
-              The above pipeline simply performs an adaptive threshold on a
-              grayscaled version on the image, highlighting its edges which make
-              the image easier to process through the next step, the tensorflow
-              model.
+              This landmark detection identifies 21 different points on each hand, 
+              providing precise spatial coordinates that are essential for recognizing 
+              different sign language gestures.
             </p>
           </div>
         </div>
       </div>
       <div className="bg-secondary jumbotron">
-        <h3 className="text-center">2. Tensorflow CNN</h3>
+        <h3 className="text-center">2. Gesture Classification</h3>
         <div className="row justify-content-center">
           <img
             src="model-architecture.png"
-            alt="OpenCV Pipeline Demo"
+            alt="Gesture Classification Model"
             className="img-responsive col-xs-12 col-md-6"
             style={{ height: '100%' }}
           />
           <div className="col-xs-12 col-md-6">
             <p>
-              After experimenting with various different model architectures,
-              transfer learning from various different base convolutional neural
-              network including vgg19, alexnet, and more, we settled on the
-              architecture shown here, which both allowed the model to be run in
-              real time as well as be fairly accurate. We took the output of a
-              pre-trained convolutional neural network (mobile net) and added
-              three dense layers to alter the output to classify hand signs.
+              After experimenting with different approaches, we developed a custom 
+              classification model that processes the landmark data from MediaPipe. 
+              Our model takes the normalized coordinates of hand landmarks and uses 
+              a lightweight neural network to classify them into ASL letters. This approach 
+              provides both real-time performance and high accuracy, as the pre-processing 
+              by MediaPipe significantly simplifies the classification task.
             </p>
           </div>
         </div>
       </div>
       <div className="bg-secondary jumbotron">
-        <h3 className="text-center">3. Interpreting The Results</h3>
+        <h3 className="text-center">3. Temporal Filtering</h3>
         <div className="row justify-content-center">
           <img
             src="interpretation.png"
-            alt="OpenCV Pipeline Demo"
+            alt="Temporal Filtering"
             className="img-responsive col-xs-12 col-md-6"
             style={{ height: '100%' }}
           />
           <div className="col-xs-12 col-md-6">
             <p>
-              The Tensorflow CNN mentioned above only gave us a stream of
-              outputs, which had to be translated into a readable english word /
-              set of letters, as shown in the image. To accomplish this, we
-              developed a small algorithm like the following: If the previous
-              detected letter is different from the current detector letter, and
-              the previous detected letter has been repeated at least x number
-              of times, then add the previous letter to the running predicted
-              word. However, the threshold x may change from letter to letter,
-              and we had to experiment with different values of x: smaller
-              values for letters which the model had trouble with, and larger
-              values for letters which the model was more confident with. Then,
-              when a space character is detected, we run autocorrection and text
-              to speech as mentioned in the text below.
+              Our system employs temporal filtering to convert the stream of letter 
+              predictions into coherent text. The algorithm works by checking if the 
+              current detected letter differs from the previous one, and if the previous 
+              letter has appeared consistently for a threshold number of frames. Different 
+              letters have different thresholds based on their detection reliability – 
+              higher thresholds for commonly confused letters and lower thresholds for 
+              more distinctive signs. When a space gesture is detected, the system finalizes 
+              the current word and proceeds to the next processing steps.
             </p>
           </div>
         </div>
       </div>
       <div className="bg-secondary jumbotron">
-        <h3 className="text-center">4. Autocorrection And Text To Speech</h3>
+        <h3 className="text-center">4. Text Correction and Speech Synthesis</h3>
         <div className="row justify-content-center">
           <img
             src="tts.jpeg"
-            alt="OpenCV Pipeline Demo"
+            alt="Text Correction and Speech"
             className="img-responsive col-xs-12 col-md-6"
             style={{ height: '100%' }}
           />
           <div className="col-xs-12 col-md-6">
             <p>
-              However, the letters output by the previous step were not always
-              100% perfect, which is why we included autocorrection. For the
-              select times where the previous steps are not able to accurately
-              translate a word, we use simple autocorrection to change it to the
-              nearest english word. Additionally, we used the browser text to
-              speech API to speak out loud the predicted word, allowing for even
-              more use cases.
+              To improve accuracy, we implemented a text correction system that compares 
+              detected words against an English dictionary. This helps resolve minor 
+              detection errors by suggesting the closest matching word. Additionally, 
+              we integrated the Web Speech API to convert the corrected text into spoken 
+              words, making the translation accessible to a wider audience and enabling 
+              more natural communication between sign language users and non-signers.
             </p>
           </div>
         </div>

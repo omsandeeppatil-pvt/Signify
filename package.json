@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "wasm": "cp node_modules/@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm ./public",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next dev",
     "build": "next build",
     "start": "next start"
   },
