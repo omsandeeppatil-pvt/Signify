@@ -2,15 +2,15 @@ const Page = () => {
   return (
     <div style={{ marginTop: '2em' }}>
       <div className="jumbotron text-center">
-        <h1>Signify - ASL Translator</h1>
+        <h1>SignFlow - ASL Translator</h1>
         <h4>
           A project by Arjun Rane, Supriya Khadka, and Om Patil<br />
           Guided by Prof. Pooja Kulkarni
         </h4>
         <h4>
-          Signify leverages MediaPipe technology to convert webcam input into readable
+          SignFlow leverages MediaPipe technology to convert webcam input into readable
           sign language text. The sections below outline the key processes that enable
-          Signify to translate hand gestures into written words.
+          SignFlow to translate hand gestures into written words.
         </h4>
       </div>
       
