@@ -4,7 +4,7 @@ const Page = () => {
       <div className="jumbotron text-center">
         <h1>SignFlow - ASL Translator</h1>
         <h4>
-          A project by Arjun Rane, Supriya Khadka, and Om Patil<br />
+          A project by Samar Naik, Rugved Tupkar, Vipul Mhatre<br />
           Guided by Prof. Pooja Kulkarni
         </h4>
         <h4>
